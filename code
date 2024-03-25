@@ -1,0 +1,59 @@
+import os
+import pandas as pd
+from pandas import ExcelWriter
+
+path_plantilla = '/content/Plantilla.xlsx'
+
+dfs = pd.read_excel(path_plantilla)
+----------------------------------------------------------
+
+documents = ['Billing','CentralElec-Preproduccion', 'CentralElec-Produccion','Computos-Produccion', 'Computos-Pruebas', 'Computos-Qa','Igualdad-Preproduccion','Igualdad-Produccion',' Infraestructura',
+             'Intranet-Preproduccion','Intranet-Produccion','Portal-Preproduccion','Portal-Produccion','PREP-Federal-Auditoria','PREP-Federal-Desarrollo','PREP-Federal-Produccion',
+             'PREP-Federal-QA','Recluta-Desarrollo','Recluta-Qa','RegdeActas-Produccion','RegdeActas-Pruebas','REPRE PREPROD','Seguridad','SIJE Preprod','SIJE Prod','SIJE-Qa','UTF-Produccion','UTF-Pruebas']
+files = []
+for i in documents:
+ files.append(dfs)
+
+plantilla1 = pd.concat(files, ignore_index=True)
+
+x = 0
+y = 134
+
+for i in documents:
+  plantilla1.loc[x:y, 'Cuenta de consumo'] = i
+  x = y
+  y += 134
+
+#plantilla.loc[134:150]
+---------------------------------------------------------
+#path_reportes = [file for file in os.listdir("/content/sample_data/Reportes") if '.xlsx' in file]
+path_reportes = ['Billing.xlsx','CentralElec-Preproduccion.xlsx', 'CentralElec-Produccion.xlsx','Computos-Produccion.xlsx', 'Computos-Pruebas.xlsx', 'Computos-Qa.xlsx','Igualdad-Preproduccion.xlsx','Igualdad-Produccion.xlsx','Infraestructura.xlsx',
+             'Intranet-Preproduccion.xlsx','Intranet-Produccion.xlsx','Portal-Preproduccion.xlsx','Portal-Produccion.xlsx','PREP-Federal-Auditoria.xlsx','PREP-Federal-Desarrollo.xlsx','PREP-Federal-Produccion.xlsx',
+             'PREP-Federal-QA.xlsx','Recluta-Desarrollo.xlsx','Recluta-Qa.xlsx','RegdeActas-Produccion.xlsx','RegdeActas-Pruebas.xlsx','REPRE PREPROD.xlsx','Seguridad.xlsx','SIJE Preprod.xlsx','SIJE Prod.xlsx','SIJE-Qa.xlsx','UTF-Produccion.xlsx','UTF-Pruebas.xlsx']
+#path_reportes = os.listdir("/content/sample_data/Reportes")
+cantidad = []
+#print(path_reportes)
+
+#path_aux = pd.read_excel('/content/Reportes/Reportes v1 3 Precios mx INE Billing_sep2023_v1 - copia.xlsx')
+#path_aux.loc[0:10]
+for i in path_reportes:
+# print(i)
+    path_aux = pd.read_excel('/content/Reportes_dic/' + i)
+    cantidad.append(path_aux)
+
+#cantidad
+cantidad_join = pd.concat(cantidad,ignore_index=True)
+
+clean_cantidad = cantidad_join.drop(['Servicio','Sub-Servicios','Unidad de Medida de consumo mensual', 'Cantidades Consumo Mensual','Cantidades Consumo Mensual.1','Importe Total sin Iva MXN','Unnamed: 9','Unnamed: 10'], axis=1)
+plantilla1.insert(loc=4, column='Cantidades Consumo Mensual', value=clean_cantidad['Cantidades Consumo Mensual.2'])
+plantilla1.insert(loc=5, column='Precio Unitario MXN', value=clean_cantidad['Precio Unitario sin Iva MXN'])
+plantilla1.insert(loc=6, column='Importe Total MXN', value=clean_cantidad['Importe Total sin Iva MXN.1'])
+
+#plantilla1.to_excel('Reporte_DIC2023.xlsx', index=False)
+#clean_cantidad['Cantidades Consumo Mensual.2']
+----------------------------------------------------------
+plantilla1.to_excel('Reporte_DIC2023.xlsx', index=False)
+----------------------------------------------------------
+#opcional
+from google.colab import drive
+drive.mount('/content/drive')
