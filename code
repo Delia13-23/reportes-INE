@@ -17,12 +17,12 @@ for i in documents:
 plantilla1 = pd.concat(files, ignore_index=True)
 
 x = 0
-y = 134
+y = 132
 
 for i in documents:
   plantilla1.loc[x:y, 'Cuenta de consumo'] = i
   x = y
-  y += 134
+  y += 132
 
 #plantilla.loc[134:150]
 ---------------------------------------------------------
